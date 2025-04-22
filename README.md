@@ -1,10 +1,10 @@
 # Retail Sales Analysis SQL Project
 
-This is the first project of many more i wanna do to improve my habilities and to build an portifolio in data analysis and data science.
+This is the first of many projects I want to do to improve my skills and build a portfolio in data analysis and data science.
 
-At first i was think about how to do those projects because i'm not so creative at this moment. So on youtube i've founded the youtube channel of [Najirh](https://github.com/najirh), [Zero Analyst](https://www.youtube.com/@zero_analyst), with a tone of classes and projects ideas with the execution of the hole projects. So i let here my thanks for [Najirh](https://github.com/najirh) and his rich content.
+At first, I wasn’t sure how to approach these projects because I’m not feeling very creative at the moment. While browsing YouTube, I came across the [Zero Analyst](https://www.youtube.com/@zero_analyst) channel by [Najirh](https://github.com/najirh), which features a lot of class-style content and project ideas, along with full project walkthroughs. So I’d like to take a moment to thank Najirh for the valuable content he shares.
 
-So the original project has an free retail sales database and 10 business questions to be solved to guide the data analysis, all of this been solved in video. To challenge myself i've include more 10 business questions and improved those questions in Chat GPT to get an more bigger perspect than mine, since i'm starting.
+The original project uses a free retail sales database and includes 10 business questions that guide the data analysis, all of which are solved in the video. To challenge myself, I added 10 more business questions and refined the original ones using ChatGPT to gain a broader perspective, since I’m just starting out.
 
 ## Overview
 
@@ -12,7 +12,9 @@ So the original project has an free retail sales database and 10 business questi
 **Level**: Beginner
 **Database**: `sql_project_p1`
 
-The main goal of this project is demonstrate SQL skills and techniques used by data analysts to explore, clean, and analyze data using retail sales as cenario. The project involves setting up a retail sales database from .csv to SQL, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries.
+The main goal of this project is to demonstrate SQL skills and techniques commonly used by data analysts to explore, clean, and analyze data, using a retail sales scenario. The project involves setting up a retail sales database by importing CSV files into a PostgreSQL database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries.
+
+I'm also using tools such as Excel, PostgreSQL, Git, and GitHub to manage, analyze, and version-control the project effectively.
 
 ## Objectives
 
@@ -192,28 +194,146 @@ GROUP BY shift;
 ```
 More Bussines questions:
 
-12. **Write a SQL query to find the average total sale (total_sale) by age group (e.g., 18–25, 26–35, 36–45, etc.).**:
-13. **Write a SQL query to find the top 3 products with the highest quantity sold (quantiy) in December 2022.**:
-14. **Write a SQL query to list all transactions made by female customers (gender = 'Female') who are older than 30.**:
-15. **Write a SQL query to find the day of the week with the highest number of sales (based on sale_date).**:
-16. **Write a SQL query that returns the total sales (total_sale) and the cost of goods sold (cogs) per customer, and calculates the profit margin (total_sale - cogs) for each one.**:
-17. **Write a SQL query to show the average ticket size by category (average ticket = average total_sale per transaction).**:
-18. **Write a SQL query to return sales made on the first and last day present in the table (sale_date).**:
+11. **Write a SQL query to find the average total sale (total_sale) by age group (e.g., 18–25, 26–35, 36–45, etc.).**:
+
+```sql
+SELECT
+	CASE
+		WHEN age < 18 THEN 'Teenager'
+		WHEN age BETWEEN 18 AND 35 THEN 'Young Adult'
+		WHEN age BETWEEN 36 AND 60 THEN 'Adult'
+		ELSE 'Senior'
+	END AS age_group,
+	AVG(total_sale) AS avg_total_sale
+FROM retail_sales
+GROUP BY 1;
+```
+
+12. **Write a SQL query to find the category with the highest quantity sold (quantiy) in December 2022.**:
+
+```sql
+SELECT 
+	category,
+	SUM(quantiy)
+FROM retail_sales
+WHERE TO_CHAR(sale_date, 'YYYY-MM') = '2022-12'
+GROUP BY category
+ORDER BY 2 DESC
+LIMIT 1;
+```
+
+13. **Write a SQL query to list all transactions made by female customers (gender = 'Female') who are older than 30.**:
+
+```sql
+SELECT *
+FROM retail_sales
+WHERE gender = 'Female' AND age > 30;
+```
+
+14. **Write a SQL query to find the day of the week with the highest number of sales (based on sale_date).**:
+
+```sql
+SELECT
+	TO_CHAR(sale_date, 'DAY') as day_of_week,
+	COUNT(*) as number_of_sales
+FROM retail_sales
+GROUP BY day_of_week
+ORDER BY 2 DESC
+LIMIT 1;
+```
+
+15. **Write a SQL query that returns the total sales (total_sale) and the cost of goods sold (cogs) per customer, and calculates the profit margin (total_sale - cogs) for each one.**:
+
+```sql
+SELECT
+	customer_id,
+	SUM(total_sale) client_total_sale,
+	SUM(cogs) AS client_cogs,
+	SUM(total_sale - cogs) AS profit_margin
+FROM retail_sales
+GROUP BY customer_id;
+```
+
+16. **Write a SQL query to show the average ticket size by category (average ticket = average total_sale per transaction).**:
+
+```sql
+SELECT
+	category,
+	AVG(total_sale) AS average_ticket
+FROM retail_sales
+GROUP BY category;
+```
+
+17. **Write a SQL query to return sales made on the first and last day present in the table (sale_date).**:
+
+```sql
+SELECT * 
+FROM retail_sales
+WHERE
+	sale_date = (SELECT MIN (sale_date) FROM retail_sales) OR
+	sale_date = (SELECT MAX (sale_date) FROM retail_sales)
+ORDER BY sale_date, sale_time DESC;
+```
+
+18. **Write a SQL query to show the difference between the actual total paid (total_sale) and the price that would have been paid if each unit was sold at the lowest price_per_unit in its category.**:
+
+```sql
+WITH sales_summary AS (
+SELECT
+	category,
+	SUM(total_sale) AS actual_total_sale,
+	MIN (price_per_unit) * SUM(quantiy) AS total_sale_as_lowest
+FROM retail_sales
+GROUP BY category
+)
+SELECT
+	category,
+	actual_total_sale,
+	total_sale_as_lowest,
+	actual_total_sale - total_sale_as_lowest AS difference
+FROM sales_summary;
+```
+
 19. **Write a SQL query to find the category with the highest price per unit variation (largest difference between MAX(price_per_unit) and MIN(price_per_unit) within the category).**:
+
+```sql
+SELECT
+	category,
+	MAX(price_per_unit) - MIN(price_per_unit) AS price_per_unit_variation
+FROM retail_sales
+GROUP BY category
+ORDER BY 2 DESC;
+```
+
 20. **Write a SQL query to find the average number of transactions per customer (customer_id).**:
 
-## Findings
+```sql
+WITH transactions_summary AS (
+SELECT
+	customer_id,
+	COUNT(transactions_id) AS customer_transactions
+FROM retail_sales
+GROUP BY customer_id
+)
+SELECT
+	ROUND(AVG(customer_transactions))
+FROM transactions_summary;
+```
 
-- **Customer Demographics**: The dataset includes customers from various age groups, with sales distributed across different categories such as Clothing and Beauty.
-- **High-Value Transactions**: Several transactions had a total sale amount greater than 1000, indicating premium purchases.
-- **Sales Trends**: Monthly analysis shows variations in sales, helping identify peak seasons.
-- **Customer Insights**: The analysis identifies the top-spending customers and the most popular product categories.
+## Findings & Reports
 
-## Reports
-
-- **Sales Summary**: A detailed report summarizing total sales, customer demographics, and category performance.
-- **Trend Analysis**: Insights into sales trends across different months and shifts.
-- **Customer Insights**: Reports on top customers and unique customer counts per category.
+- **Number of Registers**: The dataset contains 1,987 retail sales records.
+- **Customer Demographics**: Customers are distributed across a wide range of age groups. The "Young Adults" group (ages 18–35) accounts for the highest average number of purchases. Seniors are the least active group, and no transactions were recorded for teenagers (under 18). Notably, 735 transactions were made by females over the age of 30.
+- **High-Value Transactions**: Multiple transactions exceed 1,000 in total sale value, indicating a presence of premium or bulk purchases in the dataset.
+- **Sales Trends**: A month-by-month analysis highlights seasonal sales trends. For instance, July had the highest number of sales in 2022, while February led in 2023, possibly linked to local holidays or promotions.
+- **Top Customers**: The analysis revealed the top 5 spending customers, with the highest-spending customer reaching a total of 38,440 in purchases.
+- **Category Performance**: The Electronics category generated the highest total revenue, while Clothing had the largest number of individual transactions, suggesting lower-priced or more frequently purchased items.
+- **Category Demographics**: The average age of buyers in the Beauty category is 40 years. Beauty also had 141 unique customers, ranking third in popularity behind Electronics and Clothing.
+- **Gender and Category Preferences**: Females purchase more from the Beauty category than males, reinforcing typical retail patterns. On the other hand, males slightly outpaced females in Electronics and Clothing purchases, though female participation in those categories remained significant.
+- **Sales by Time of Day**: The Evening shift saw the highest number of transactions, followed by Morning with about half as many. This suggests that customers tend to shop outside typical working hours, possibly before or after their jobs.
+- **Sales by Weekday**: Sunday recorded the highest number of sales, indicating increased consumer activity during weekends.
+- **Sales by Quantity**: In terms of units sold, the Electronics category outperformed all others, pointing to both popularity and potentially high-volume purchases.
+- **Profitability**: Overall, the profit margin per customer (total sales - COGS) is healthy, suggesting a sustainable pricing strategy across most categories.
 
 ## Conclusion
 
