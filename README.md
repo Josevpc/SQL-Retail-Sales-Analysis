@@ -4,12 +4,11 @@ This is the first of many projects I want to do to improve my skills and build a
 
 At first, I wasn’t sure how to approach these projects because I’m not feeling very creative at the moment. While browsing YouTube, I came across the [Zero Analyst](https://www.youtube.com/@zero_analyst) channel by [Najirh](https://github.com/najirh), which features a lot of class-style content and project ideas, along with full project walkthroughs. So I’d like to take a moment to thank Najirh for the valuable content he shares.
 
-The original project uses a free retail sales database and includes 10 business questions that guide the data analysis, all of which are solved in the video. To challenge myself, I added 10 more business questions and refined the original ones using ChatGPT to gain a broader perspective, since I’m just starting out.
+The original project uses a free retail sales database and includes 10 business questions that guide the data analysis, all of which are solved in the video. To challenge myself, I added 10 more business questions and refined them using ChatGPT to gain a broader perspective, since I’m just starting out.
 
 ## Overview
 
 **Title**: Retail Sales Analysis
-**Level**: Beginner
 **Database**: `sql_project_p1`
 
 The main goal of this project is to demonstrate SQL skills and techniques commonly used by data analysts to explore, clean, and analyze data, using a retail sales scenario. The project involves setting up a retail sales database by importing CSV files into a PostgreSQL database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries.
@@ -33,20 +32,19 @@ I'm also using tools such as Excel, PostgreSQL, Git, and GitHub to manage, analy
 ```sql
 CREATE DATABASE sql_project_p1;
 
-CREATE TABLE retail_sales
-			(
-				transactions_id INT PRIMARY KEY,
-				sale_date DATE,
-				sale_time TIME,
-				customer_id INT,
-				gender VARCHAR(15),
-				age INT,
-				category VARCHAR(15),
-				quantiy INT,
-				price_per_unit FLOAT,
-				cogs FLOAT,
-				total_sale FLOAT
-			);
+CREATE TABLE retail_sales (
+	transactions_id INT PRIMARY KEY,
+	sale_date DATE,
+	sale_time TIME,
+	customer_id INT,
+	gender VARCHAR(15),
+	age INT,
+	category VARCHAR(15),
+	quantiy INT,
+	price_per_unit FLOAT,
+	cogs FLOAT,
+	total_sale FLOAT
+		);
 ```
 
 ### 2. Data Exploration & Cleaning
@@ -322,9 +320,9 @@ FROM transactions_summary;
 
 ## Findings & Reports
 
-- **Number of Registers**: The dataset contains 1,987 retail sales records.
+- **Number of Registers**: The dataset contains 1987 retail sales records.
 - **Customer Demographics**: Customers are distributed across a wide range of age groups. The "Young Adults" group (ages 18–35) accounts for the highest average number of purchases. Seniors are the least active group, and no transactions were recorded for teenagers (under 18). Notably, 735 transactions were made by females over the age of 30.
-- **High-Value Transactions**: Multiple transactions exceed 1,000 in total sale value, indicating a presence of premium or bulk purchases in the dataset.
+- **High-Value Transactions**: Multiple transactions exceed 1000 in total sale value, indicating a presence of premium or bulk purchases in the dataset.
 - **Sales Trends**: A month-by-month analysis highlights seasonal sales trends. For instance, July had the highest number of sales in 2022, while February led in 2023, possibly linked to local holidays or promotions.
 - **Top Customers**: The analysis revealed the top 5 spending customers, with the highest-spending customer reaching a total of 38,440 in purchases.
 - **Category Performance**: The Electronics category generated the highest total revenue, while Clothing had the largest number of individual transactions, suggesting lower-priced or more frequently purchased items.
